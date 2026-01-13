@@ -1,0 +1,7 @@
+{
+  "name": "web-upload",
+  "compatibility_date": "2026-01-13",
+  "assets": {
+    "directory": "."
+  }
+}
