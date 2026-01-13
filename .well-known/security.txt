@@ -1,0 +1,20 @@
+# Security Policy for agent.jezlol.xyz
+# This file follows RFC 9116 (https://www.rfc-editor.org/rfc/rfc9116.html)
+
+Contact: mailto:security@jezlol.xyz
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://agent.jezlol.xyz/.well-known/security.txt
+
+# This is a static distribution site for agent binaries.
+# If you discover a security vulnerability, please contact the security team
+# using the email address above.
+
+# Scope
+# This security policy applies to:
+# - The distribution website (agent.jezlol.xyz)
+# - The agent binaries distributed through this site
+
+# Please do not report:
+# - Issues with the agent binaries themselves (contact the project maintainers)
+# - General availability or performance issues

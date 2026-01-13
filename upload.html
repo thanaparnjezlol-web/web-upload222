@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upload files to file hosting service">
+    <title>Upload Files - agent.jezlol.xyz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            background: #e7f3ff;
+            border-color: #2980b9;
+        }
+        
+        .upload-area.dragover {
+            background: #d4edda;
+            border-color: #27ae60;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .file-size {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .upload-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: #2980b9;
+        }
+        
+        .upload-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box strong {
+            color: #856404;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #155724;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #721c24;
+        }
+        
+        .token-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .token-help {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to file list</a>
+        
+        <h1>📤 Upload Files</h1>
+        <p class="subtitle">Upload files directly to the hosting service</p>
+        
+        <div class="warning-box">
+            <strong>⚠️ Setup Required:</strong> You need a GitHub Personal Access Token to upload files. 
+            <a href="#setup" style="color: #856404; text-decoration: underline;">See setup instructions below</a>
+        </div>
+        
+        <div class="section" id="setup">
+            <h2>GitHub Token Setup</h2>
+            <div class="info-box">
+                <p><strong>Step 1:</strong> Create a GitHub Personal Access Token:</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Developer settings → Personal access tokens</a></li>
+                    <li>Click "Generate new token (classic)"</li>
+                    <li>Select scope: <code>repo</code> (full control of private repositories)</li>
+                    <li>Click "Generate token"</li>
+                    <li>Copy the token (you won't see it again!)</li>
+                </ol>
+            </div>
+            
+            <div class="info-box">
+                <label for="github-token"><strong>Step 2: Enter your GitHub Token:</strong></label>
+                <input type="password" id="github-token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                <div class="token-help">⚠️ This token is stored in your browser only. Never share it with others.</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Upload Files</h2>
+            
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to select files or drag and drop</div>
+                <div style="font-size: 0.9em; color: #7f8c8d;">You can upload multiple files at once</div>
+                <input type="file" id="file-input" class="file-input" multiple>
+            </div>
+            
+            <div id="file-list" class="file-list"></div>
+            
+            <button id="upload-btn" class="upload-btn" disabled>Upload Files</button>
+            
+            <div id="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div id="progress-text" style="text-align: center; margin-top: 5px; color: #7f8c8d;"></div>
+            </div>
+            
+            <div id="message-container"></div>
+        </div>
+        
+        <div class="section">
+            <h2>How It Works</h2>
+            <div class="info-box">
+                <ul style="margin-left: 20px;">
+                    <li>Files are uploaded to GitHub repository via API</li>
+                    <li>Cloudflare Pages automatically detects changes and deploys</li>
+                    <li>Files become available at <code>agent.jezlol.xyz</code> within 1-2 minutes</li>
+                    <li>Your GitHub token is stored locally in your browser only</li>
+                </ul>
+            </div>
+            <div class="warning-box" style="margin-top: 20px;">
+                <strong>⚠️ ข้อจำกัด:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>GitHub API จำกัดไฟล์ที่ <strong>100MB ต่อไฟล์</strong></li>
+                    <li>ถ้าไฟล์เกิน 100MB ต้องใช้ <strong>Git Command Line</strong> แทน</li>
+                    <li>ดูคำแนะนำเพิ่มเติม: <a href="/UPLOAD_LARGE_FILES.md" target="_blank">UPLOAD_LARGE_FILES.md</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>This file hosting is powered by Cloudflare Pages</p>
+            <p>For security concerns, please see <a href="/.well-known/security.txt">security.txt</a></p>
+        </footer>
+    </div>
+    
+    <script>
+        const REPO_OWNER = 'thanaparnjezlol-web';
+        const REPO_NAME = 'agent_upload';
+        const REPO_BRANCH = 'main';
+        
+        let selectedFiles = [];
+        let githubToken = '';
+        
+        // Load token from localStorage
+        const savedToken = localStorage.getItem('github_token');
+        if (savedToken) {
+            document.getElementById('github-token').value = savedToken;
+            githubToken = savedToken;
+        }
+        
+        // Save token when changed
+        document.getElementById('github-token').addEventListener('input', (e) => {
+            githubToken = e.target.value;
+            localStorage.setItem('github_token', githubToken);
+            updateUploadButton();
+        });
+        
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const uploadBtn = document.getElementById('upload-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const messageContainer = document.getElementById('message-container');
+        
+        // Click to select files
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+        
+        const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+        
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            displayFiles();
+            updateUploadButton();
+            checkFileSizes();
+        }
+        
+        function displayFiles() {
+            fileList.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                const isLarge = file.size > MAX_FILE_SIZE;
+                const warningIcon = isLarge ? '⚠️ ' : '';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-name">${warningIcon}${file.name}</div>
+                        <div class="file-size" style="${isLarge ? 'color: #dc3545; font-weight: bold;' : ''}">${formatFileSize(file.size)}${isLarge ? ' (เกิน 100MB!)' : ''}</div>
+                    </div>
+                    <button onclick="removeFile(${index})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+        
+        function checkFileSizes() {
+            const largeFiles = selectedFiles.filter(f => f.size > MAX_FILE_SIZE);
+            if (largeFiles.length > 0) {
+                const warning = document.createElement('div');
+                warning.className = 'warning-box';
+                warning.innerHTML = `
+                    <strong>⚠️ ไฟล์ขนาดใหญ่เกิน 100MB</strong>
+                    <p>GitHub API จำกัดไฟล์ที่ 100MB ต่อไฟล์</p>
+                    <p><strong>ไฟล์ที่เกิน:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        ${largeFiles.map(f => `<li>${f.name} (${formatFileSize(f.size)})</li>`).join('')}
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>วิธีแก้ไข:</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>ใช้ <strong>Git Command Line</strong> แทน (แนะนำ):
+                            <code style="display: block; margin-top: 5px; padding: 10px; background: #f4f4f4;">
+                                git add installer_output/<br>
+                                git commit -m "Add installer files"<br>
+                                git push
+                            </code>
+                        </li>
+                        <li>หรือดูคำแนะนำเพิ่มเติมใน <a href="/UPLOAD_LARGE_FILES.md" target="_blank">UPLOAD_LARGE_FILES.md</a></li>
+                    </ol>
+                `;
+                messageContainer.innerHTML = '';
+                messageContainer.appendChild(warning);
+            } else {
+                // Clear warning if no large files
+                const existingWarning = messageContainer.querySelector('.warning-box');
+                if (existingWarning && existingWarning.textContent.includes('เกิน 100MB')) {
+                    existingWarning.remove();
+                }
+            }
+        }
+        
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+            updateUploadButton();
+        }
+        
+        function updateUploadButton() {
+            uploadBtn.disabled = selectedFiles.length === 0 || !githubToken;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        uploadBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0 || !githubToken) return;
+            
+            // Check for large files
+            const largeFiles = selectedFiles.filter(f => f.size > MAX_FILE_SIZE);
+            if (largeFiles.length > 0) {
+                showMessage(`ไม่สามารถอัปโหลดได้: มีไฟล์เกิน 100MB. กรุณาใช้ Git Command Line แทน (ดูคำแนะนำด้านบน)`, 'error');
+                return;
+            }
+            
+            uploadBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            messageContainer.innerHTML = '';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const progress = ((i + 1) / selectedFiles.length) * 100;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Uploading ${i + 1} of ${selectedFiles.length}: ${file.name}`;
+                
+                try {
+                    await uploadFile(file);
+                    successCount++;
+                } catch (error) {
+                    errorCount++;
+                    showMessage(`Error uploading ${file.name}: ${error.message}`, 'error');
+                }
+            }
+            
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Upload complete!';
+            
+            if (successCount > 0) {
+                showMessage(`Successfully uploaded ${successCount} file(s). Files will be available in 1-2 minutes.`, 'success');
+            }
+            
+            if (errorCount > 0) {
+                showMessage(`Failed to upload ${errorCount} file(s).`, 'error');
+            }
+            
+            selectedFiles = [];
+            displayFiles();
+            uploadBtn.disabled = false;
+            progressContainer.style.display = 'none';
+            
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
+        });
+        
+        async function uploadFile(file) {
+            const path = `installer_output/${file.name}`; // You can customize the path
+            
+            // Read file as base64
+            const base64Content = await fileToBase64(file);
+            
+            // Check if file exists
+            let sha = null;
+            try {
+                const existingFile = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (existingFile.ok) {
+                    const data = await existingFile.json();
+                    sha = data.sha;
+                }
+            } catch (e) {
+                // File doesn't exist, that's okay
+            }
+            
+            // Upload file
+            const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Upload ${file.name}`,
+                    content: base64Content,
+                    branch: REPO_BRANCH,
+                    ...(sha && { sha: sha })
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Upload failed');
+            }
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function showMessage(message, type) {
+            const box = document.createElement('div');
+            box.className = type === 'success' ? 'success-box' : type === 'error' ? 'error-box' : 'info-box';
+            box.textContent = message;
+            messageContainer.appendChild(box);
+        }
+        
+        // Make removeFile available globally
+        window.removeFile = removeFile;
+    </script>
+</body>
+</html>

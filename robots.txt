@@ -1,0 +1,8 @@
+# robots.txt for agent.jezlol.xyz
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location (if you add one later)
+# Sitemap: https://agent.jezlol.xyz/sitemap.xml

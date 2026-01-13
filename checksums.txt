@@ -1,0 +1,20 @@
+# SHA-256 Checksums for Agent Binaries
+# Generated: 2024-01-15
+# 
+# Verify your download using:
+#   Windows: certutil -hashfile <filename> SHA256
+#   Linux:   sha256sum <filename>
+#   macOS:   shasum -a 256 <filename>
+
+# Windows 64-bit
+SHA256(agent-windows-amd64.exe)= e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+# Linux 64-bit
+SHA256(agent-linux-amd64)= e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+# Note: The checksums above are placeholder values.
+# Replace them with actual SHA-256 checksums after building your agent binaries.
+# 
+# To generate checksums:
+#   sha256sum agent-windows-amd64.exe >> checksums.txt
+#   sha256sum agent-linux-amd64 >> checksums.txt
