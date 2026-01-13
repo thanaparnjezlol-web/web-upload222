@@ -1,0 +1,3 @@
+# Exclude large .exe files from Cloudflare Pages deployment
+# These files will remain in GitHub and can be downloaded via GitHub API
+installer_output/app/*.exe
